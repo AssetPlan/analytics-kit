@@ -1,4 +1,4 @@
-import analyticsWrapper from './src/analytics.js';
+import analyticsKit from './src/analytics.js';
 
 const consoleLogProvider = {
     track: (event, properties) => {
@@ -49,9 +49,9 @@ const flakyAsyncProvider = {
     }
 };
 
-const syncTracker = analyticsWrapper.registerProvider(consoleLogProvider);
-const asyncTracker = analyticsWrapper.registerProvider(asyncProvider);
-const flakyTracker = analyticsWrapper.registerProvider(flakyAsyncProvider);
+const syncTracker = analyticsKit.registerProvider(consoleLogProvider);
+const asyncTracker = analyticsKit.registerProvider(asyncProvider);
+const flakyTracker = analyticsKit.registerProvider(flakyAsyncProvider);
 
 // Sync usage (same as before)
 syncTracker.track('sync-event', { data: 'test' });

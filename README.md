@@ -1,11 +1,11 @@
-# Analytics Interface
+# Analytics Kit
 
-A lightweight analytics provider wrapper for consistent tracking across different analytics services.
+A complete analytics toolkit with provider wrappers and presets for consistent tracking across different analytics services.
 
 ## Installation
 
 ```bash
-npm install @assetplan/analytics-interface
+npm install @assetplan/analytics-kit
 ```
 
 ## Usage
@@ -13,7 +13,7 @@ npm install @assetplan/analytics-interface
 ### Basic Setup
 
 ```javascript
-import analyticsWrapper from '@assetplan/analytics-interface';
+import analyticsKit from '@assetplan/analytics-kit';
 
 // Create a provider
 const consoleProvider = {
@@ -38,7 +38,7 @@ const consoleProvider = {
 };
 
 // Register the provider
-const tracker = analyticsWrapper.registerProvider(consoleProvider);
+const tracker = analyticsKit.registerProvider(consoleProvider);
 
 // Use the tracker
 tracker.track('button_clicked', { button: 'signup' });
@@ -58,7 +58,7 @@ const asyncProvider = {
     }
 };
 
-const asyncTracker = analyticsWrapper.registerProvider(asyncProvider);
+const asyncTracker = analyticsKit.registerProvider(asyncProvider);
 
 // Can be used with await
 const result = await asyncTracker.track('purchase', { amount: 100 });
@@ -71,9 +71,9 @@ asyncTracker.track('page_view', { page: '/home' });
 
 ```javascript
 // Each provider is independent
-const googleTracker = analyticsWrapper.registerProvider(googleAnalyticsProvider);
-const segmentTracker = analyticsWrapper.registerProvider(segmentProvider);
-const consoleTracker = analyticsWrapper.registerProvider(consoleProvider);
+const googleTracker = analyticsKit.registerProvider(googleAnalyticsProvider);
+const segmentTracker = analyticsKit.registerProvider(segmentProvider);
+const consoleTracker = analyticsKit.registerProvider(consoleProvider);
 
 // Track to specific providers
 googleTracker.track('conversion', { value: 100 });

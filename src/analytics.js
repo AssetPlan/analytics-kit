@@ -39,6 +39,6 @@ class AnalyticsWrapper {
     }
 }
 
-const analyticsWrapper = new AnalyticsWrapper();
+const analyticsKit = new AnalyticsWrapper();
 
-export default analyticsWrapper;
+export default analyticsKit;
