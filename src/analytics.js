@@ -12,7 +12,16 @@ class AnalyticsWrapper {
                 }
 
                 try {
-                    return provider[methodName](...args);
+                    const result = provider[methodName](...args);
+                    
+                    // Handle promises
+                    if (result && typeof result.then === 'function') {
+                        return result.catch(error => {
+                            console.error(`Analytics provider async error in '${methodName}':`, error);
+                        });
+                    }
+                    
+                    return result;
                 } catch (error) {
                     console.error(`Analytics provider error in '${methodName}':`, error);
                 }

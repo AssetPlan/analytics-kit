@@ -21,31 +21,60 @@ const consoleLogProvider = {
     }
 };
 
-// Example of incomplete provider (missing some methods)
-const incompleteProvider = {
-    track: (event, properties) => {
-        console.log('Incomplete provider tracking:', event, properties);
+// Example of async provider that returns promises
+const asyncProvider = {
+    track: async (event, properties) => {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        console.log('Async tracking completed:', event, properties);
+        return { success: true, eventId: Math.random() };
+    },
+    identify: async (userId, traits) => {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        console.log('Async identify completed:', userId, traits);
+        return { success: true, userId };
+    },
+    ready: () => {
+        // Mix of sync and async methods is fine
+        console.log('Sync ready called');
     }
-    // Missing other methods - will show warnings
 };
 
-// Example of provider that throws errors
-const errorProvider = {
-    track: (event, properties) => {
-        throw new Error('Simulated analytics error');
+// Example of async provider that sometimes fails
+const flakyAsyncProvider = {
+    track: async (event, properties) => {
+        if (Math.random() > 0.5) {
+            throw new Error('Random async failure');
+        }
+        return { success: true, event };
     }
 };
 
-window.consoleLogTrack = analyticsWrapper.registerProvider(consoleLogProvider);
-window.incompleteTrack = analyticsWrapper.registerProvider(incompleteProvider);
-window.errorTrack = analyticsWrapper.registerProvider(errorProvider);
+const syncTracker = analyticsWrapper.registerProvider(consoleLogProvider);
+const asyncTracker = analyticsWrapper.registerProvider(asyncProvider);
+const flakyTracker = analyticsWrapper.registerProvider(flakyAsyncProvider);
 
-// This works normally
-window.consoleLogTrack.track('test', { test: 'test' });
+// Sync usage (same as before)
+syncTracker.track('sync-event', { data: 'test' });
 
-// This shows warning for missing method
-window.incompleteTrack.identify('user123', { name: 'John' });
+// Async usage - you can await if you need the result
+async function example() {
+    try {
+        const result = await asyncTracker.track('async-event', { data: 'test' });
+        console.log('Got result:', result); // { success: true, eventId: 0.123... }
+        
+        const identifyResult = await asyncTracker.identify('user123', { name: 'John' });
+        console.log('Identify result:', identifyResult); // { success: true, userId: 'user123' }
+    } catch (error) {
+        // This won't happen because errors are caught internally
+        console.log('This rarely runs');
+    }
+}
 
-// This handles the error gracefully
-window.errorTrack.track('will-error', { data: 'test' });
+// Fire-and-forget async usage (don't await)
+asyncTracker.track('fire-and-forget', { background: true });
+
+// Flaky provider - errors are handled gracefully
+flakyTracker.track('might-fail', { data: 'test' });
+
+example();
 
