@@ -13,14 +13,14 @@ class AnalyticsWrapper {
 
                 try {
                     const result = provider[methodName](...args);
-                    
+
                     // Handle promises
                     if (result && typeof result.then === 'function') {
                         return result.catch(error => {
                             console.error(`Analytics provider async error in '${methodName}':`, error);
                         });
                     }
-                    
+
                     return result;
                 } catch (error) {
                     console.error(`Analytics provider error in '${methodName}':`, error);
@@ -35,6 +35,35 @@ class AnalyticsWrapper {
             reset: createMethodWrapper('reset'),
             alias: createMethodWrapper('alias'),
             ready: createMethodWrapper('ready')
+        };
+    }
+
+    createScopedAnalytics(scopeMap) {
+        const instances = {};
+
+        // Validate the scope map on creation
+        for (const scopeName in scopeMap) {
+            if (typeof scopeMap[scopeName] !== 'function') {
+                throw new Error(`Scope '${scopeName}' must be a function returning an analytics provider`);
+            }
+        }
+
+        return {
+            /**
+             * Returns the analytics provider for the given scope.
+             * Initializes it if it hasn't been already.
+             */
+            for(scope) {
+                if (!scopeMap[scope]) {
+                    throw new Error(`Scope '${scope}' is not registered`);
+                }
+
+                if (!instances[scope]) {
+                    instances[scope] = scopeMap[scope]();
+                }
+
+                return instances[scope];
+            }
         };
     }
 }
