@@ -80,6 +80,102 @@ googleTracker.track('conversion', { value: 100 });
 segmentTracker.track('user_action', { action: 'click' });
 ```
 
+### Scoped Analytics
+
+Create multiple analytics contexts with lazy initialization:
+
+```javascript
+import analyticsKit from '@assetplan/analytics-kit';
+
+// Define bootstrap functions for different contexts
+const bootstrapProductionAnalytics = () => {
+    // Initialize PostHog, Segment, etc.
+    return analyticsKit.registerProvider(productionProvider);
+};
+
+const bootstrapDevelopmentAnalytics = () => {
+    return analyticsKit.registerProvider(consoleProvider);
+};
+
+// Create scoped analytics
+const analytics = analyticsKit.createScopedAnalytics({
+    production: bootstrapProductionAnalytics,
+    development: bootstrapDevelopmentAnalytics,
+    testing: () => analyticsKit.registerProvider(mockProvider)
+});
+
+// Use specific scopes - providers are initialized lazily
+analytics.for('production').track('user_signup', { plan: 'premium' });
+analytics.for('development').identify('user123');
+
+// Environment-based usage
+const currentAnalytics = analytics.for(
+    process.env.NODE_ENV === 'production' ? 'production' : 'development'
+);
+currentAnalytics.track('page_view', { page: '/dashboard' });
+```
+
+#### Real-world Example
+
+```javascript
+import analyticsKit from '@assetplan/analytics-kit';
+import posthog from 'posthog-js';
+
+// Define a console-based fallback provider
+const bootstrapConsoleAnalytics = () => {
+  const consoleProvider = {
+    identify(userId, traits) {
+      console.log(`[console] identify`, userId, traits);
+    },
+    track(event, props) {
+      console.log(`[console] track`, event, props);
+    }
+  };
+
+  return analyticsKit.registerProvider(consoleProvider);
+};
+
+// Define a PostHog-based analytics provider for 'renter'
+const bootstrapRenterAnalytics = () => {
+  posthog.init('REPLACE_WITH_RENTER_KEY', {
+    autocapture: false,
+    person_profiles: 'identified_only'
+  }, 'renter');
+
+  const renterInstance = posthog.getInstance('renter');
+
+  const renterProvider = {
+    identify(userId, traits) {
+      renterInstance.identify(userId, traits);
+    },
+    track(event, props) {
+      renterInstance.capture(event, props);
+    }
+  };
+
+  return analyticsKit.registerProvider(renterProvider);
+};
+
+// Define scoped analytics manager
+const isProduction = process.env.NODE_ENV === 'production';
+
+const analytics = analyticsKit.createScopedAnalytics({
+  renter: () => isProduction ? bootstrapRenterAnalytics() : bootstrapConsoleAnalytics(),
+  owner: () => isProduction ? bootstrapConsoleAnalytics() : bootstrapConsoleAnalytics(), // Stubbed example
+  sessionless: () => isProduction ? bootstrapConsoleAnalytics() : bootstrapConsoleAnalytics()
+});
+
+// Usage
+analytics.for('renter').identify('user123', { plan: 'pro' });
+analytics.for('renter').track('page_view', { path: '/dashboard' });
+```
+
+**Features:**
+- **Lazy initialization**: Providers are only created when first accessed
+- **Caching**: Each scope's provider is initialized once and reused
+- **Error handling**: Invalid scopes throw clear error messages
+- **Flexible**: Bootstrap functions can contain any initialization logic
+
 ## Provider Interface
 
 Each provider should implement these methods (all optional):
