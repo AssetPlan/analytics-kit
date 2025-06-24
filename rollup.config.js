@@ -6,7 +6,7 @@ export default {
     {
       file: 'dist/index.cjs',
       format: 'cjs',
-      exports: 'default'
+      exports: 'named'
     },
     {
       file: 'dist/index.esm.js',
