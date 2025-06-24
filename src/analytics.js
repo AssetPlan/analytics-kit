@@ -71,4 +71,6 @@ class AnalyticsWrapper {
 const analyticsKit = new AnalyticsWrapper();
 
 export default analyticsKit;
+export { AnalyticsWrapper };
+export const createScopedAnalytics = analyticsKit.createScopedAnalytics.bind(analyticsKit);
 export * from './providers/index.js';
