@@ -1,0 +1,1 @@
+export { default as consoleProvider } from './console.js';

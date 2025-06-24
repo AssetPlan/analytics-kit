@@ -42,3 +42,4 @@ class AnalyticsWrapper {
 const analyticsKit = new AnalyticsWrapper();
 
 export default analyticsKit;
+export * from './providers/index.js';
