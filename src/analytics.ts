@@ -1,28 +1,30 @@
-function registerProvider(provider) {
+import type { AnalyticsProvider, ProviderWrapper, ScopeMap, ScopedAnalytics } from './types.js';
+
+function registerProvider(provider: AnalyticsProvider): ProviderWrapper {
     if (!provider || typeof provider !== 'object') {
         throw new Error('Provider must be an object');
     }
 
-    const createMethodWrapper = (methodName) => {
-        return (...args) => {
+    const createMethodWrapper = <K extends keyof AnalyticsProvider>(methodName: K) => {
+        return (...args: Parameters<AnalyticsProvider[K]>) => {
             if (typeof provider[methodName] !== 'function') {
-                console.warn(`Provider method '${methodName}' is not implemented`);
+                console.warn(`Provider method '${String(methodName)}' is not implemented`);
                 return;
             }
 
             try {
-                const result = provider[methodName](...args);
+                const result = (provider[methodName] as Function)(...args);
 
                 // Handle promises
                 if (result && typeof result.then === 'function') {
-                    return result.catch(error => {
-                        console.error(`Analytics provider async error in '${methodName}':`, error);
+                    return result.catch((error: Error) => {
+                        console.error(`Analytics provider async error in '${String(methodName)}':`, error);
                     });
                 }
 
                 return result;
             } catch (error) {
-                console.error(`Analytics provider error in '${methodName}':`, error);
+                console.error(`Analytics provider error in '${String(methodName)}':`, error);
             }
         };
     };
@@ -37,8 +39,8 @@ function registerProvider(provider) {
     };
 }
 
-function createScopedAnalytics(scopeMap) {
-    const instances = {};
+function createScopedAnalytics(scopeMap: ScopeMap): ScopedAnalytics {
+    const instances: Record<string, AnalyticsProvider> = {};
 
     // Validate the scope map on creation
     for (const scopeName in scopeMap) {
@@ -52,7 +54,7 @@ function createScopedAnalytics(scopeMap) {
          * Returns the analytics provider for the given scope.
          * Initializes it if it hasn't been already.
          */
-        for(scope) {
+        for(scope: string): AnalyticsProvider {
             if (!scopeMap[scope]) {
                 throw new Error(`Scope '${scope}' is not registered`);
             }
@@ -66,6 +68,13 @@ function createScopedAnalytics(scopeMap) {
     };
 }
 
+const analyticsKit = {
+    registerProvider,
+    createScopedAnalytics
+};
+
 export { registerProvider, createScopedAnalytics };
+
+export default analyticsKit;
 
 export * from './providers/index.js';

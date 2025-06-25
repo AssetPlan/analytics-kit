@@ -1,7 +1,11 @@
 import { registerProvider, createScopedAnalytics } from "@/analytics";
+import analyticsKit from "@/analytics"
 import { describe, it, expect, vi } from "vitest";
 
 describe('analytics', () => {
+    it('analyticsKit should be an object', () => {
+        expect(typeof analyticsKit).toBe('object')
+    });
     it('registerProvider should be a function', () => {
         expect(typeof registerProvider).toBe('function');
     });

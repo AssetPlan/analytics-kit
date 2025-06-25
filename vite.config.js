@@ -1,9 +1,17 @@
 import { defineConfig } from 'vite'
+import { resolve } from 'path'
+import dts from 'vite-plugin-dts'
 
 export default defineConfig({
+  plugins: [
+    dts({
+      insertTypesEntry: true,
+      rollupTypes: true
+    })
+  ],
   build: {
     lib: {
-      entry: 'src/analytics.js',
+      entry: 'src/analytics.ts',
       name: 'AnalyticsKit',
       fileName: (format) => `index.${format === 'es' ? 'esm' : format}.js`
     },
@@ -16,7 +24,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': '/src'
+      '@': resolve(__dirname, 'src')
     }
   }
 })

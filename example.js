@@ -1,4 +1,4 @@
-import analyticsKit from './src/analytics.js';
+import * as analyticsKit from './dist/index.esm.js';
 
 const consoleLogProvider = {
     track: (event, properties) => {

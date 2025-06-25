@@ -5,6 +5,7 @@
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.esm.js",
@@ -34,7 +35,10 @@
   "author": "AssetPlan",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^24.0.4",
+    "typescript": "^5.8.3",
     "vite": "^7.0.0",
+    "vite-plugin-dts": "^4.5.4",
     "vitest": "^3.2.4"
   },
   "repository": {
