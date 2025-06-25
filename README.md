@@ -18,22 +18,22 @@ import analyticsKit from '@assetplan/analytics-kit';
 // Create a provider
 const consoleProvider = {
     track: (event, properties) => {
-        console.log('Tracking:', event, properties);
+        console.log('📊 Track:', event, properties);
     },
     identify: (userId, traits) => {
-        console.log('Identifying:', userId, traits);
+        console.log('👤 Identify:', userId, traits);
     },
     page: (name, properties) => {
-        console.log('Page:', name, properties);
+        console.log('📄 Page:', name, properties);
     },
     reset: () => {
-        console.log('Reset');
+        console.log('🔄 Reset: User session cleared');
     },
     alias: (newId, previousId) => {
-        console.log('Alias:', newId, previousId);
+        console.log('🔗 Alias:', { newId, previousId });
     },
     ready: () => {
-        console.log('Ready');
+        console.log('✅ Ready: Console provider initialized');
     }
 };
 
@@ -43,6 +43,23 @@ const tracker = analyticsKit.registerProvider(consoleProvider);
 // Use the tracker
 tracker.track('button_clicked', { button: 'signup' });
 tracker.identify('user123', { email: 'user@example.com' });
+```
+
+### Using the Built-in Console Provider
+
+For development and debugging, you can use the built-in console provider:
+
+```javascript
+import analyticsKit, { consoleProvider } from '@assetplan/analytics-kit';
+
+// Use the built-in console provider directly
+const tracker = analyticsKit.registerProvider(consoleProvider);
+
+tracker.track('button_clicked', { button: 'signup' });
+// Output: 📊 Track: button_clicked { button: 'signup' }
+
+tracker.identify('user123', { email: 'user@example.com' });
+// Output: 👤 Identify: user123 { email: 'user@example.com' }
 ```
 
 ### Async Providers
@@ -182,12 +199,12 @@ Each provider should implement these methods (all optional):
 
 ```javascript
 {
-    track: (event: string, properties: object) => void | Promise<any>,
-    identify: (userId: string, traits: object) => void | Promise<any>,
-    page: (name: string, properties: object) => void | Promise<any>,
-    reset: () => void | Promise<any>,
-    alias: (newId: string, previousId: string) => void | Promise<any>,
-    ready: () => void | Promise<any>
+    track: (event: string, properties?: object) => void | Promise<void>,
+    identify: (userId: string, traits?: object) => void | Promise<void>,
+    page: (name: string, properties?: object) => void | Promise<void>,
+    reset: () => void | Promise<void>,
+    alias: (newId: string, previousId: string) => void | Promise<void>,
+    ready: (callback?: () => void) => void | Promise<void>
 }
 ```
 
@@ -199,6 +216,19 @@ The wrapper handles errors gracefully:
 - Thrown errors are caught and logged
 - Promise rejections are handled automatically
 - Your app continues running even if analytics fail
+
+## Development
+
+```bash
+# Build the package
+npm run build
+
+# Build and watch for changes
+npm run dev
+
+# Run tests
+npm run test
+```
 
 ## License
 
