@@ -17,8 +17,9 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "test": "vitest",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -33,8 +34,8 @@
   "author": "AssetPlan",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.0.0",
-    "rollup": "^3.0.0"
+    "vite": "^7.0.0",
+    "vitest": "^3.2.4"
   },
   "repository": {
     "type": "git",
