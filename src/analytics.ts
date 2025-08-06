@@ -64,6 +64,30 @@ function createScopedAnalytics(scopeMap: ScopeMap): ScopedAnalytics {
             }
 
             return instances[scope];
+        },
+
+        /**
+         * Manually initializes the provider for the given scope.
+         * Useful for starting automatic event tracking without waiting for the first .track() call.
+         */
+        init(scope: string): void {
+            if (!scopeMap[scope]) {
+                throw new Error(`Scope '${scope}' is not registered`);
+            }
+
+            if (!instances[scope]) {
+                instances[scope] = scopeMap[scope]();
+            }
+        },
+
+        /**
+         * Manually initializes all registered scopes.
+         * Useful for starting automatic event tracking on all providers.
+         */
+        initAll(): void {
+            for (const scope in scopeMap) {
+                this.init(scope);
+            }
         }
     };
 }

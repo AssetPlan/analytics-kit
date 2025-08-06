@@ -20,4 +20,6 @@ export type ScopeMap = Record<string, () => AnalyticsProvider>;
 
 export interface ScopedAnalytics {
   for: (scope: string) => AnalyticsProvider;
+  init: (scope: string) => void;
+  initAll: () => void;
 }

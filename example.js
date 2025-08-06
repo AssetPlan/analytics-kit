@@ -78,3 +78,20 @@ flakyTracker.track('might-fail', { data: 'test' });
 
 example();
 
+// Example of scoped analytics with manual initialization
+const scopedAnalytics = analyticsKit.createScopedAnalytics({
+    website: () => consoleLogProvider,
+    userEvents: () => asyncProvider
+});
+
+// Initialize website scope immediately for automatic events
+// This starts automatic tracking without needing to call .track() first
+scopedAnalytics.init('website');
+
+// userEvents scope remains lazy - only initialized when first used
+console.log('Website analytics initialized for automatic events');
+
+// Later usage works the same as before
+scopedAnalytics.for('website').track('page-view', { url: '/home' });
+scopedAnalytics.for('userEvents').track('user-action', { action: 'click' });
+
