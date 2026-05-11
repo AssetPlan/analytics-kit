@@ -31,7 +31,7 @@ jobs:
         run: npm run build
 
       - name: Publish to npm
-        run: npm publish --access public --provenance
+        run: npm publish --access public --tag latest --provenance
 
       - name: Setup Node.js for GitHub Packages
         uses: actions/setup-node@v4
