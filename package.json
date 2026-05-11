@@ -1,6 +1,6 @@
 {
   "name": "@assetplan/analytics-kit",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A complete analytics toolkit with provider wrappers and presets for consistent tracking across different analytics services",
   "type": "module",
   "main": "dist/index.cjs.js",
